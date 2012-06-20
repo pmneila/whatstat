@@ -12,23 +12,23 @@ def parse_event(line):
     
     split = re.split('^.*?([0-9/]{8}\s+[0-9:]{8}):\s+?([^:]+):\s(.*)$', line, flags=re.DOTALL)
     if len(split) == 5:
-        return Message, split[1:4]
+        return chat.Message, split[1:4]
     
     split = re.split('^.*?([0-9/]{8}\s+[0-9:]{8}):\s+?(.+)\schanged\sthe\ssubject\sto\s(.*)$', line, flags=re.DOTALL)
     if len(split) == 5:
-        return SubjectChange, split[1:4]
+        return chat.SubjectChange, split[1:4]
     
     split = re.split('^.*?([0-9/]{8}\s+[0-9:]{8}):\s+?(.+)\schanged\sthe\sgroup\sicon.*$', line, flags=re.DOTALL)
     if len(split) == 4:
-        return IconChange, split[1:3]
+        return chat.IconChange, split[1:3]
     
     split = re.split('^.*?([0-9/]{8}\s+[0-9:]{8}):\s+?(.+)\sjoined.*$', line, flags=re.DOTALL)
     if len(split) == 4:
-        return Join, split[1:3]
+        return chat.Join, split[1:3]
     
     split = re.split('^.*?([0-9/]{8}\s+[0-9:]{8}):\s+?(.+)\sjoined.*$', line, flags=re.DOTALL)
     if len(split) == 4:
-        return Leave, split[1:3]
+        return chat.Leave, split[1:3]
     
     return None, line
 
@@ -75,7 +75,7 @@ def parse(filename):
         events[-1].text = events[-1].text.strip()
     
     events = sorted(events, key=attrgetter('datetime'))
-    return Chat(events, authors.values())
+    return chat.Chat(events, authors.values())
 
 def parse_words(filename):
     

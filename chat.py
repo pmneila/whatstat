@@ -9,11 +9,17 @@ class Chat(object):
         self.authors = authors
         self.messages = filter(lambda x: isinstance(x, Message), self.events)
     
+    def set_aliases(self, aliasdict):
+        for author in self.authors:
+            if author.name in aliasdict:
+                author.alias = aliasdict[author.name]
+    
     def get_author(self, name):
         if isinstance(name, Author):
             return name
         
-        author = filter(lambda x: x.name.lower() == name.lower() or x.alias.lower() == name.lower(), self.authors)
+        author = filter(lambda x: x.name.lower() == name.lower() or \
+                    (x.alias is not None and x.alias.lower() == name.lower()), self.authors)
         if len(author) > 0:
             return author[0]
         return None
