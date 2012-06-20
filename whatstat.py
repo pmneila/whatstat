@@ -1,123 +1,92 @@
 
 import sys
 import re
-import codecs
-import datetime
+from collections import defaultdict, Counter
+from operator import itemgetter
+import math
 
-class Author(object):
-    
-    def __init__(self, name, alias=None):
-        self.name = name
-        self.alias = alias
-    
-    def __str__(self):
-        return unicode(self.name).encode("utf-8")
-    
-    def __unicode__(self):
-        return self.name
+import networkx as nx
 
-class Message(object):
-    
-    def __init__(self, datetime, author, text):
-        self.datetime = datetime
-        self.author = author
-        self.text = text
-    
-    def __str__(self):
-        return unicode(self).encode("utf-8")
-    
-    def __unicode__(self):
-        return (u"{0}: {1}: {2}").format(self.datetime, self.author, self.text)
+import parser
+from parser import parse
 
-class SubjectChange(object):
+def count_words(chat):
     
-    def __init__(self, datetime, author, text):
-        self.datetime = datetime
-        self.author = author
-        self.text = text
-    
-    def __str__(self):
-        return unicode(self).encode("utf-8")
-    
-    def __unicode__(self):
-        return (u"{0}: {1}: changed the subject to {2}").format(self.datetime, self.author, self.text)
-    
+    words = chat.get_words(True)
+    count = Counter(words)
+    return count
 
-class IconChange(object):
+def most_common_uncommon_words(chat, common_words, n=100):
     
-    def __init__(self, datetime, author):
-        self.datetime = datetime
-        self.author = author
-    
-    def __str__(self):
-        return unicode(self).encode("utf-8")
-    
-    def __unicode__(self):
-        return (u"{0}: {1} changed the group icon").format(self.datetime, self.author)
+    count = count_words(chat)
+    count = count.most_common()
+    return filter(lambda x: x[0] not in common_words, count)[:n]
 
-def parse_event(line):
+def messages_per_author(chat):
     
-    split = re.split('^.*?([0-9/]{8}\s+[0-9:]{8}):\s+?(.+):\s(.*)$', line, flags=re.DOTALL)
-    if len(split) == 5:
-        return Message, split[1:4]
+    res = dict((str(author),0) for author in chat.authors)
     
-    split = re.split('^.*?([0-9/]{8}\s+[0-9:]{8}):\s+?(.+)\schanged\sthe\ssubject\sto\s(.*)$', line, flags=re.DOTALL)
-    if len(split) == 5:
-        return SubjectChange, split[1:4]
+    for author in chat.authors:
+        authorchat = chat.filter_author(author)
+        res[str(author)] = len(authorchat.messages)
     
-    split = re.split('^.*?([0-9/]{8}\s+[0-9:]{8}):\s+?(.+)\schanged\sthe\sgroup\sicon.*$', line, flags=re.DOTALL)
-    if len(split) == 4:
-        return IconChange, split[1:3]
-    
-    return None, line
+    res = sorted(res.iteritems(), key=itemgetter(1))
+    return res
 
-def parse(filename):
+def characters_per_author(chat):
     
-    events = []
-    authors = {}
-    with codecs.open(filename, encoding='utf-8') as f:
-        
-        last_event_type = None
-        
-        for line in f.readlines():
-            
-            event_type, fields = parse_event(line)
-            
-            if event_type is not None:
-                
-                dt = datetime.datetime.strptime(fields[0], '%d/%m/%y %H:%M:%S')
-                
-                # Create the author if it doesn't exist.
-                if fields[1] not in authors:
-                    authors[fields[1]] = Author(fields[1])
-                author = authors[fields[1]]
-                
-                # This is horrible.
-                if last_event_type == Message:
-                    events[-1].text = events[-1].text.strip()
-                
-                if event_type == Message:
-                    newevent = Message(dt, author, fields[2])
-                elif event_type == SubjectChange:
-                    newevent = SubjectChange(dt, author, fields[2])
-                elif event_type == IconChange:
-                    newevent = IconChange(dt, author)
-                
-                events.append(newevent)
-                
-            elif last_event_type == Message:
-                events[-1].text += line
-                event_type = Message
-            
-            last_event_type = event_type
+    res = dict((str(author),0) for author in chat.authors)
     
-    # This is horrible.
-    if last_event_type == Message:
-        events[-1].text = events[-1].text.strip()
+    for author in chat.authors:
+        authorchat = chat.filter_author(author)
+        res[str(author)] = len(authorchat.get_text())
     
-    return events, authors
+    res = sorted(res.iteritems(), key=itemgetter(1))
+    return res
+
+def positives(chat):
+    
+    posnumber = dict((str(author),0) for author in chat.authors)
+    posdict = defaultdict(lambda : defaultdict(int))
+    
+    # Get the messages with positive marks.
+    poschat = chat.filter_messages('(^|\s)[\w]+\++($|\s|\,)')
+    for message in poschat.messages:
+        giver = message.author
+        # Get the votes in the current message.
+        matches = re.findall('(^|\s)([\w]+)(\++)($|\s|\,)', message.text)
+        for match in matches:
+            # Get the receiver and sum the number of positives.
+            receiver = chat.get_author(match[1])
+            if receiver is None or giver is receiver:
+                continue
+            num = len(match[2])
+            posdict[str(giver)][str(receiver)] += num
+            posnumber[str(receiver)] += num
+    
+    # Get the value of the maximum edge.
+    maximum = max(map(lambda x: max(x.values()), posdict.values()))
+    
+    # Build the graph.
+    g = nx.DiGraph()
+    for name, number in posnumber.iteritems():
+        g.add_node(name, positives=number,
+                    label='%s (%s)' % (name, number),
+                    color='lightblue2', style='filled',
+                    fontsize=12)
+    for giver, distr in posdict.iteritems():
+        for receiver, number in distr.iteritems():
+            relative = number/float(maximum)
+            hue = 0.2 - 0.2 * relative
+            g.add_edge(giver, receiver, 
+                    weight=number, label=number,
+                    penwidth=5*relative + 1.0,
+                    color="%s 1.0 1.0"%hue,
+                    fontsize=10)
+    
+    return g
 
 if __name__ == '__main__':
-    events, authors = parse(sys.argv[1])
-    for a in authors:
+    chat = parser.parse(sys.argv[1])
+    for a in chat.authors:
         print a
