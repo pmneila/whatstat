@@ -75,6 +75,10 @@ template = Template(u"""
     <div id="characters_chart_div" style="width: 900px; height: 500px;"></div>
     <h2>Positivos</h2>
     <a href="positives.png"><img src="positives.png"/></a>
+    <div style="width: 900px; font-size: small;">
+        Cada nodo contiene el nombre del participante y entre paréntesis los positivos recibidos.
+        Una flecha A---n-->B indica que A dio n positivos a B. El grosor y el color de la flecha
+        dependen del número de positivos.</div>
     <h2>Palabras más repetidas (quitando las 1000 más comunes del español)</h2>
     <div id="table_div" style="width: 900px; height: 500px;"></div>
   </body>
@@ -83,9 +87,9 @@ template = Template(u"""
 
 def write_stats(destpath, chat, common_words):
     
-    messages_author = stats.messages_per_author(chat)
+    messages_author = stats.messages_per_author(chat)[::-1]
     aux1 = u', '.join(map(lambda x: u'["{0}", {1}]'.format(x[0], x[1]), messages_author))
-    characters_author = stats.characters_per_author(chat)
+    characters_author = stats.characters_per_author(chat)[::-1]
     aux2 = u', '.join(map(lambda x: u'["{0}", {1}]'.format(x[0], x[1]), characters_author))
     
     words = stats.most_common_uncommon_words(chat, common_words, 250)
@@ -117,4 +121,4 @@ if __name__ == '__main__':
     execfile(sys.argv[2], globals(), locals())
     chat.set_aliases(alias)
     common_words = parser.parse_words(sys.argv[3])
-    write_stats("cosa", chat, common_words)
+    write_stats(sys.argv[4], chat, common_words)
