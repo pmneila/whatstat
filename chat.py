@@ -1,6 +1,6 @@
 
 import re
-from operator import attrgetter
+from operator import attrgetter, methodcaller
 
 class Chat(object):
     
@@ -19,7 +19,7 @@ class Chat(object):
             return name
         
         author = filter(lambda x: x.name.lower() == name.lower() or \
-                    (x.alias is not None and x.alias.lower() == name.lower()), self.authors)
+                    (name.lower() in x.alias_lower), self.authors)
         if len(author) > 0:
             return author[0]
         return None
@@ -52,6 +52,8 @@ class Author(object):
     
     def __init__(self, name, alias=None):
         self.name = name
+        if alias is None:
+            alias = []
         self.alias = alias
     
     def __str__(self):
@@ -64,6 +66,12 @@ class Author(object):
     
     def __repr__(self):
         return "Author(%r, %r)" % (self.name, self.alias)
+    
+    def set_alias(self, alias):
+        self._alias = alias
+        self.alias_lower = map(methodcaller("lower"), self.alias)
+    
+    alias = property(lambda self: self._alias, set_alias)
 
 class Message(object):
     

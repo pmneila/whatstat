@@ -8,7 +8,15 @@ import math
 import networkx as nx
 
 import parser
-from parser import parse
+
+def load_chat(filename, authors_file=None):
+    
+    chat = parser.parse(filename)
+    if authors_file is not None:
+        execfile(authors_file, globals(), locals())
+        chat.set_aliases(authors)
+    
+    return chat
 
 def count_words(chat):
     
