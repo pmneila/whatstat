@@ -1,5 +1,6 @@
 
 import re
+import datetime
 from operator import attrgetter, methodcaller
 
 class Chat(object):
@@ -36,6 +37,27 @@ class Chat(object):
         messages = filter(lambda x: re.search(expression, x.text) is not None, self.messages)
         return Chat(messages, self.authors)
     
+    def filter_datetime_range(self, begin, end):
+        
+        events = filter(lambda x: begin <= x.datetime < end, self.events)
+        return Chat(events, self.authors)
+    
+    def filter_day(self, day):
+        
+        dt1 = datetime.datetime.combine(day, datetime.time())
+        dt2 = dt1 + datetime.timedelta(1)
+        return self.filter_datetime_range(dt1, dt2)
+    
+    def iterdays(self):
+        dates = map(methodcaller("date"), self.get_datetime_range())
+        day = dates[0]
+        while day <= dates[1]:
+            yield day, self.filter_day(day)
+            day += datetime.timedelta(1)
+    
+    def get_datetime_range(self):
+        return self.events[0].datetime, self.events[-1].datetime
+    
     def get_text(self):
         lines = map(attrgetter('text'), self.messages)
         return ' '.join(lines)
@@ -46,7 +68,14 @@ class Chat(object):
             text = text.lower()
         words = re.findall('\w+', text, flags=re.UNICODE)
         return words
+    
+    def get_subject(self):
         
+        aux = filter(lambda x: isinstance(x, SubjectChange), self.events)
+        if len(aux) > 0:
+            return aux[-1].text[1:-2]
+        return None
+    
 
 class Author(object):
     

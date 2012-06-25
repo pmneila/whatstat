@@ -13,10 +13,45 @@ def load_chat(filename, authors_file=None):
     
     chat = parser.parse(filename)
     if authors_file is not None:
-        execfile(authors_file, globals(), locals())
-        chat.set_aliases(authors)
+        aux = {}
+        execfile(authors_file, globals(), aux)
+        chat.set_aliases(aux["authors"])
     
     return chat
+
+def tf_idf(chat):
+    
+    unique_words = list(set(chat.get_words(True)))
+    df = dict([(w,0) for w in unique_words])
+    tf = {}
+    
+    D = 0
+    for day, daychat in chat.iterdays():
+        
+        daywords = daychat.get_words(True)
+        daywordscount = Counter(daywords)
+        
+        if len(daywords) > 0:
+            D += 1
+        
+        for word, count in daywordscount.iteritems():
+            tf[(day,word)] = count #/float(len(daywords))
+            df[word] += 1
+    
+    tf_idf = {}
+    by_day = {}
+    by_word = {}
+    for (day,word), count in tf.iteritems():
+        aux = count * math.log(float(D)/df[word])
+        tf_idf[(day,word)] = aux
+        if day not in by_day:
+            by_day[day] = {}
+        if word not in by_word:
+            by_word[word] = {}
+        by_day[day][word] = aux
+        by_word[word][day] = aux
+    
+    return by_day, by_word, df
 
 def count_words(chat):
     
