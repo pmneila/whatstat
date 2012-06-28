@@ -8,6 +8,7 @@ from string import Template
 
 import parser
 import whatstat as stats
+from chat import Join
 
 import networkx as nx
 
@@ -18,14 +19,14 @@ template = Template(u"""
     <meta charset="utf-8" />
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart", "table"]});
+      google.load("visualization", "1", {packages:["corechart", "table", "annotatedtimeline"]});
       google.setOnLoadCallback(draw);
       function draw() {
           drawMessagesChart();
           drawCharactersChart();
           drawTable();
           drawTT();
-          //drawDailyColaboration();
+          drawDailyColaboration();
       }
       
       function drawMessagesChart() {
@@ -70,28 +71,35 @@ template = Template(u"""
       }
       
       function drawTT() {
-        var data = new google.visualization.DataTable();
-        // data.addColumn('number', 'Ranking');
-        data.addColumn('string', '');
-        data.addRows([
-          $trending_topics
+        var data = new google.visualization.arrayToDataTable([
+            ["Trending topic"],
+            $trending_topics
         ]);
-
+        
         var table = new google.visualization.Table(document.getElementById('tt_div'));
         table.draw(data, {showRowNumber: false});
       }
       
       function drawDailyColaboration() {
-        var data = google.visualization.arrayToDataTable([
-          
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Día');
+        data.addColumn('number', 'Total');
+        //data.addColumn('string', 'title1');
+        //data.addColumn('string', 'text1');
+        $author_columns
+        data.addRows([
+            $messages_per_day
         ]);
-
+        
         var options = {
-          title: 'Colaboración diaria por participante'
+          title: 'Colaboración diaria'
         };
 
-        var chart = new google.visualization.LineChart(document.getElementById('daily_div'));
-        chart.draw(data, options);
+        var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+            document.getElementById('daily_div'));
+        annotatedtimeline.draw(data, {'displayAnnotations': true});
+        //var chart = new google.visualization.LineChart(document.getElementById('daily_div'));
+        //chart.draw(data, options);
       }
       
     </script>
@@ -111,7 +119,8 @@ template = Template(u"""
     <h2>Colaboración</h2>
     <div id="messages_chart_div" style="width: 900px; height: 500px;"></div>
     <div id="characters_chart_div" style="width: 900px; height: 500px;"></div>
-    <!--div id="daily_div" style="width: 1400px; height: 500px;"></div-->
+    <h3>Colaboración diaria</h3>
+    <div id="daily_div" style="width: 900px; height: 400px;"></div>
     <h2>Palabras más repetidas (quitando las 1000 más comunes del español)</h2>
     <div id="table_div" style="width: 500px; height: 500px;"></div>
   </body>
@@ -130,14 +139,40 @@ def write_stats(destpath, chat, common_words):
     
     tt = u', '.join(map(lambda x: u'["{0}"]'.format(x), stats.trending_topics(chat, 10)))
     
-    # daily = stats.messages_per_day_per_author(chat)
-    # aux4 = [u'[ "Día", ' + u', '.join(map(lambda x: u'"{0}"'.format(x), chat.authors)) + u']']
-    # for day, count in sorted(daily.items()):
-    #     delme = ', '.join(map(lambda x: str(count[x]), chat.authors))
-    #     aux4.append(u'["{0}", '.format(day.isoformat()) + delme +  u']')
-    # aux4 = ',\n'.join(aux4)
+    sorted_authors = map(lambda x: chat.get_author(x[0]), messages_author)[:8]
+    author_columns = []
+    for author in sorted_authors:
+        author_columns.append(u'data.addColumn("number", "{0}");'.format(unicode(author)))
+    author_columns = '\n\t'.join(author_columns)
     
+    messages_per_day = []
+    for day, messages in sorted(stats.messages_per_day_per_author(chat).items()):
+        
+        # Messages per author.
+        number_messages = sum(v for v in messages.values())
+        row = [u'[new Date({0}, {1}, {2})'.format(day.year, day.month-1, day.day)]
+        row.append(str(number_messages))
+        #row.append('null')
+        #row.append('null')
+        for author in sorted_authors:
+            row.append(str(messages[author]))
+        messages_per_day.append(', '.join(row) +']')
+        
+        # Join and leave.
+        # daychat = chat.filter_day(day)
+        # for event in filter(lambda x: isinstance(x, Join), daychat.events):
+        #     row = [u'[new Date({0}, {1}, {2})'.format(day.year, day.month-1, day.day)]
+        #     for author in sorted_authors:
+        #         row.append("null")
+        #     row.append("null")
+        #     row.append(u'"{0} se unió"'.format(unicode(event.author)))
+        #     row.append(u'"{0} se unió"]'.format(unicode(event.author)))
+        #     messages_per_day.append(', '.join(row))
+    messages_per_day = ',\n\t'.join(messages_per_day)
+        
     code = template.substitute(messages=aux1, characters=aux2, words=aux3,
+                                author_columns=author_columns,
+                                messages_per_day=messages_per_day,
                                 trending_topics=tt,
                                 chatname=chat.get_subject(),
                                 date=chat.events[-1].datetime.strftime("el %A, %d de %B de %Y a las %H:%M"))

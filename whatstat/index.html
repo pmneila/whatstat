@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart", "table", "annotatedtimeline"]});
+      google.setOnLoadCallback(draw);
+      function draw() {
+          drawMessagesChart();
+          drawCharactersChart();
+          drawTable();
+          drawTT();
+          drawDailyColaboration();
+      }
+      
+      function drawMessagesChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Autor', 'Número de mensajes'],
+          ["R", 4326], ["JF", 4225], ["P", 4053], ["J", 2515], ["Lola", 2264], ["Bazo", 1103], ["K", 1102], ["Z", 930], ["A", 629], ["Ir", 481], ["Rql", 355], ["JM", 191], ["Perdi", 173], ["JoSe", 123], ["AM", 85], ["RPS", 83], ["V", 50]
+        ]);
+        
+        var options = {
+          title: 'Número de mensajes por participante'
+        };
+        
+        var chart = new google.visualization.PieChart(document.getElementById('messages_chart_div'));
+        chart.draw(data, options);
+      }
+      
+      function drawCharactersChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Autor', 'Número de caracteres'],
+          ["P", 136538], ["JF", 104089], ["R", 90734], ["J", 53066], ["Lola", 52761], ["K", 31964], ["Z", 26840], ["Bazo", 20043], ["A", 13920], ["Rql", 12014], ["Ir", 9644], ["JM", 5684], ["Perdi", 3814], ["AM", 2195], ["JoSe", 2189], ["RPS", 885], ["V", 793]
+        ]);
+        
+        var options = {
+          title: 'Cantidad de texto escrito por participante'
+        };
+        
+        var chart = new google.visualization.PieChart(document.getElementById('characters_chart_div'));
+        chart.draw(data, options);
+      }
+      
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        // data.addColumn('number', 'Ranking');
+        data.addColumn('string', 'Palabra');
+        data.addColumn('number', 'Número de repeticiones');
+        data.addRows([
+          ["xd", 557], ["jojojo", 500], ["p", 494], ["jf", 308], ["r", 304], ["jojojojo", 295], ["jajaja", 262], ["k", 258], ["lola", 245], ["bazo", 217], ["j", 209], ["m", 175], ["tb", 150], ["x", 139], ["jaja", 124], ["jojo", 122], ["z", 114], ["joder", 113], ["l", 112], ["irene", 107], ["jm", 105], ["com", 103], ["vero", 101], ["http", 101], ["madrid", 100], ["pa", 98], ["yao", 93], ["partido", 92], ["cenar", 87], ["ramos", 86], ["dias", 84], ["tetas", 81], ["jojojojojo", 78], ["n", 78], ["youtube", 76], ["gol", 75], ["30", 74], ["torres", 71], ["am", 69], ["puto", 69], ["jajajaja", 69], ["ke", 67], ["mola", 65], ["d", 61], ["sara", 61], ["foro", 61], ["barsa", 60], ["rql", 59], ["vais", 58], ["merida", 56], ["ayer", 56], ["20", 56], ["españa", 55], ["hostia", 55], ["www", 54], ["v", 54], ["mases", 54], ["xddd", 53], ["pq", 53], ["mia", 50], ["ros", 50], ["finde", 50], ["acueducto", 48], ["jeje", 47], ["coño", 46], ["polla", 46], ["magan", 46], ["tbm", 46], ["dia", 46], ["carlos", 45], ["xq", 45], ["mía", 45], ["rafa", 43], ["cine", 43], ["weno", 42], ["móvil", 42], ["t", 41], ["chele", 40], ["badajoz", 40], ["jojojojoj", 40], ["watch", 40], ["oliver", 39], ["toy", 39], ["pablo", 39], ["22", 38], ["marca", 37], ["tacuba", 37], ["ganas", 37], ["f1", 36], ["twitter", 36], ["google", 35], ["pito", 35], ["mario", 35], ["laura", 35], ["cani", 35], ["penalti", 35], ["swype", 34], ["viernes", 34], ["foster", 34], ["feature", 33], ["the", 33], ["jose", 33], ["perdi", 33], ["ibiza", 33], ["campeones", 33], ["lunes", 33], ["pepe", 33], ["womad", 33], ["beber", 32], ["indra", 32], ["vosotros", 32], ["gana", 32], ["youtube_gdata_player", 32], ["paja", 31], ["alli", 31], ["peli", 31], ["serie", 31], ["meter", 31], ["xdd", 31], ["rato", 31], ["h", 30], ["benji", 30], ["pene", 30], ["seria", 30], ["pilar", 30], ["salido", 30], ["andres", 30], ["internet", 29], ["cae", 29], ["juanma", 29], ["mensajes", 29], ["tele", 29], ["guasap", 29], ["rps", 29], ["culo", 28], ["jugando", 28], ["to", 28], ["andrés", 28], ["icono", 28], ["iker", 28], ["coentrao", 28], ["na", 28], ["msn", 28], ["penaltis", 28], ["cáncer", 28], ["habéis", 27], ["tt", 27], ["cena", 27], ["jfk", 27], ["balón", 27], ["quedado", 27], ["tia", 27], ["pollas", 27], ["movil", 26], ["asco", 26], ["broma", 26], ["normal", 26], ["javi", 26], ["lotina", 25], ["voto", 25], ["tuenti", 25], ["botellon", 25], ["camiseta", 25], ["aki", 25], ["fútbol", 25], ["juega", 25], ["despues", 25], ["whatsapp", 25], ["jueves", 25], ["sip", 25], ["huevos", 24], ["sales", 24], ["kien", 24], ["rubio", 24], ["mérida", 23], ["okii", 23], ["sobrevalorado", 23], ["italia", 23], ["video", 23], ["sábado", 23], ["vente", 23], ["chelsea", 23], ["kaka", 23], ["tema", 23], ["pinta", 22], ["s", 22], ["alemania", 22], ["cr7", 22], ["iconos", 22], ["omg", 22], ["cn", 22], ["cr", 22], ["jodas", 22], ["salgo", 22], ["je", 22], ["portugal", 22], ["ostia", 22], ["caceres", 22], ["ponen", 22], ["chino", 21], ["cumple", 21], ["alba", 21], ["numero", 21], ["salen", 21], ["tremendo", 21], ["oro", 21], ["balon", 21], ["planes", 21], ["oki", 21], ["metro", 21], ["mastensoquep", 21], ["sigo", 20], ["bk", 20], ["troll", 20], ["directo", 20], ["cola", 20], ["barato", 20], ["00", 20], ["jojojoj", 20], ["gay", 20], ["mio", 20], ["hambre", 20], ["on", 20], ["kiero", 20], ["estais", 19], ["apunto", 19], ["silva", 19], ["error", 19], ["cesc", 19], ["comentario", 19], ["alonso", 19], ["ganado", 19], ["calor", 19], ["quedamos", 19], ["party", 19], ["chupitos", 19], ["in", 19], ["duda", 19], ["rock", 19], ["ronaldo", 19], ["b", 19], ["casas", 19], ["50", 19], ["botellón", 19], ["ozil", 19], ["vergüenza", 18], ["lenders", 18], ["ademas", 18], ["imagino", 18], ["mete", 18]
+        ]);
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+        table.draw(data, {showRowNumber: true});
+      }
+      
+      function drawTT() {
+        var data = new google.visualization.arrayToDataTable([
+            ["Trending topic"],
+            ["silva"], ["casas"], ["mario"], ["f1"], ["tetas"], ["alba"], ["mastensoquep"], ["pilar"], ["mases"], ["am"]
+        ]);
+        
+        var table = new google.visualization.Table(document.getElementById('tt_div'));
+        table.draw(data, {showRowNumber: false});
+      }
+      
+      function drawDailyColaboration() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Día');
+        data.addColumn('number', 'Total');
+        //data.addColumn('string', 'title1');
+        //data.addColumn('string', 'text1');
+        data.addColumn("number", "R");
+	data.addColumn("number", "JF");
+	data.addColumn("number", "P");
+	data.addColumn("number", "J");
+	data.addColumn("number", "Lola");
+	data.addColumn("number", "Bazo");
+	data.addColumn("number", "K");
+	data.addColumn("number", "Z");
+        data.addRows([
+            [new Date(2012, 1, 11), 16, 0, 0, 1, 2, 0, 12, 0, 0],
+	[new Date(2012, 1, 12), 1, 0, 0, 0, 0, 0, 1, 0, 0],
+	[new Date(2012, 1, 13), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 1, 14), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 1, 15), 11, 0, 0, 0, 4, 0, 1, 0, 0],
+	[new Date(2012, 1, 16), 7, 0, 0, 0, 3, 0, 4, 0, 0],
+	[new Date(2012, 1, 17), 3, 0, 0, 0, 1, 0, 1, 0, 0],
+	[new Date(2012, 1, 18), 8, 0, 0, 1, 2, 0, 3, 0, 0],
+	[new Date(2012, 1, 19), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 1, 20), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 1, 21), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 1, 22), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 1, 23), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 1, 24), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 1, 25), 133, 24, 0, 37, 24, 0, 42, 0, 5],
+	[new Date(2012, 1, 26), 335, 65, 0, 75, 49, 0, 38, 0, 108],
+	[new Date(2012, 1, 27), 41, 14, 0, 1, 0, 0, 7, 0, 1],
+	[new Date(2012, 1, 28), 39, 7, 0, 1, 1, 0, 14, 0, 3],
+	[new Date(2012, 1, 29), 24, 9, 0, 0, 0, 0, 7, 0, 0],
+	[new Date(2012, 2, 1), 5, 2, 0, 0, 1, 0, 1, 0, 0],
+	[new Date(2012, 2, 2), 175, 0, 0, 80, 89, 0, 1, 0, 2],
+	[new Date(2012, 2, 3), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 4), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 5), 19, 9, 0, 0, 4, 0, 2, 0, 2],
+	[new Date(2012, 2, 6), 10, 4, 0, 0, 4, 0, 1, 0, 0],
+	[new Date(2012, 2, 7), 54, 27, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 8), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 9), 37, 6, 0, 14, 0, 0, 17, 0, 0],
+	[new Date(2012, 2, 10), 103, 10, 0, 26, 20, 0, 47, 0, 0],
+	[new Date(2012, 2, 11), 55, 19, 0, 2, 2, 0, 29, 0, 0],
+	[new Date(2012, 2, 12), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 13), 12, 5, 0, 5, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 14), 1, 0, 0, 0, 0, 0, 1, 0, 0],
+	[new Date(2012, 2, 15), 1, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 16), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 17), 3, 1, 0, 0, 1, 0, 1, 0, 0],
+	[new Date(2012, 2, 18), 35, 5, 0, 6, 8, 0, 13, 0, 0],
+	[new Date(2012, 2, 19), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 20), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 21), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 22), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 23), 3, 0, 0, 0, 0, 0, 1, 0, 0],
+	[new Date(2012, 2, 24), 16, 0, 0, 7, 0, 0, 0, 0, 1],
+	[new Date(2012, 2, 25), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 26), 14, 4, 0, 0, 0, 0, 6, 0, 0],
+	[new Date(2012, 2, 27), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 2, 28), 5, 1, 0, 1, 0, 0, 2, 0, 0],
+	[new Date(2012, 2, 29), 157, 68, 0, 55, 0, 0, 34, 0, 0],
+	[new Date(2012, 2, 30), 16, 3, 0, 5, 0, 0, 4, 0, 0],
+	[new Date(2012, 2, 31), 4, 3, 0, 0, 0, 0, 1, 0, 0],
+	[new Date(2012, 3, 1), 75, 19, 0, 9, 20, 2, 16, 0, 0],
+	[new Date(2012, 3, 2), 5, 0, 0, 0, 2, 0, 3, 0, 0],
+	[new Date(2012, 3, 3), 16, 1, 0, 4, 2, 3, 6, 0, 0],
+	[new Date(2012, 3, 4), 160, 64, 0, 0, 0, 24, 61, 0, 0],
+	[new Date(2012, 3, 5), 1, 1, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 3, 6), 5, 0, 0, 0, 0, 1, 1, 0, 0],
+	[new Date(2012, 3, 7), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 3, 8), 60, 8, 0, 13, 3, 0, 26, 0, 0],
+	[new Date(2012, 3, 9), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 3, 10), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 3, 11), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 3, 12), 279, 98, 25, 81, 15, 21, 31, 0, 1],
+	[new Date(2012, 3, 13), 313, 99, 93, 11, 48, 20, 38, 0, 1],
+	[new Date(2012, 3, 14), 136, 38, 23, 0, 6, 18, 44, 0, 0],
+	[new Date(2012, 3, 15), 43, 15, 7, 3, 5, 0, 13, 0, 0],
+	[new Date(2012, 3, 16), 44, 4, 17, 0, 2, 21, 0, 0, 0],
+	[new Date(2012, 3, 17), 84, 31, 6, 30, 3, 5, 0, 0, 9],
+	[new Date(2012, 3, 18), 155, 15, 50, 25, 43, 10, 0, 0, 12],
+	[new Date(2012, 3, 19), 389, 94, 44, 110, 30, 80, 6, 0, 25],
+	[new Date(2012, 3, 20), 639, 147, 102, 192, 49, 46, 17, 0, 44],
+	[new Date(2012, 3, 21), 206, 44, 66, 4, 39, 17, 11, 19, 0],
+	[new Date(2012, 3, 22), 81, 6, 32, 4, 2, 36, 0, 0, 1],
+	[new Date(2012, 3, 23), 97, 18, 28, 4, 7, 38, 2, 0, 0],
+	[new Date(2012, 3, 24), 463, 120, 101, 24, 73, 73, 15, 0, 57],
+	[new Date(2012, 3, 25), 950, 193, 184, 116, 147, 224, 7, 0, 77],
+	[new Date(2012, 3, 26), 451, 98, 130, 71, 34, 24, 71, 0, 14],
+	[new Date(2012, 3, 27), 627, 94, 101, 172, 9, 131, 34, 69, 10],
+	[new Date(2012, 3, 28), 378, 54, 105, 105, 5, 58, 12, 2, 5],
+	[new Date(2012, 3, 29), 409, 107, 107, 28, 12, 46, 54, 35, 14],
+	[new Date(2012, 3, 30), 180, 40, 68, 11, 24, 31, 1, 5, 0],
+	[new Date(2012, 4, 1), 314, 46, 90, 34, 15, 78, 28, 13, 0],
+	[new Date(2012, 4, 2), 286, 73, 61, 30, 56, 55, 2, 0, 4],
+	[new Date(2012, 4, 3), 123, 38, 42, 0, 8, 23, 6, 0, 3],
+	[new Date(2012, 4, 4), 54, 13, 14, 3, 4, 16, 0, 1, 0],
+	[new Date(2012, 4, 5), 532, 9, 66, 184, 4, 108, 8, 141, 10],
+	[new Date(2012, 4, 6), 380, 28, 111, 151, 2, 25, 0, 17, 37],
+	[new Date(2012, 4, 7), 244, 88, 70, 0, 26, 40, 20, 0, 0],
+	[new Date(2012, 4, 8), 255, 71, 66, 0, 75, 26, 7, 0, 0],
+	[new Date(2012, 4, 9), 301, 92, 102, 1, 62, 37, 2, 0, 1],
+	[new Date(2012, 4, 10), 414, 130, 116, 5, 137, 22, 0, 0, 4],
+	[new Date(2012, 4, 11), 222, 39, 53, 22, 72, 13, 2, 21, 0],
+	[new Date(2012, 4, 12), 340, 71, 50, 131, 40, 15, 5, 0, 8],
+	[new Date(2012, 4, 13), 517, 147, 156, 92, 82, 24, 7, 2, 7],
+	[new Date(2012, 4, 14), 135, 48, 47, 20, 13, 0, 0, 3, 4],
+	[new Date(2012, 4, 15), 308, 45, 82, 51, 45, 48, 3, 23, 11],
+	[new Date(2012, 4, 16), 710, 86, 138, 206, 57, 162, 0, 52, 9],
+	[new Date(2012, 4, 17), 333, 117, 108, 26, 5, 20, 13, 34, 4],
+	[new Date(2012, 4, 18), 371, 69, 69, 78, 43, 55, 4, 41, 4],
+	[new Date(2012, 4, 19), 417, 73, 57, 104, 58, 37, 0, 31, 27],
+	[new Date(2012, 4, 20), 99, 7, 28, 28, 1, 22, 0, 1, 9],
+	[new Date(2012, 4, 21), 94, 40, 31, 0, 10, 2, 8, 0, 0],
+	[new Date(2012, 4, 22), 198, 102, 78, 0, 0, 13, 0, 0, 3],
+	[new Date(2012, 4, 23), 152, 43, 46, 13, 23, 12, 0, 4, 5],
+	[new Date(2012, 4, 24), 336, 128, 88, 24, 26, 29, 25, 1, 0],
+	[new Date(2012, 4, 25), 437, 122, 70, 156, 28, 26, 9, 24, 0],
+	[new Date(2012, 4, 26), 501, 109, 121, 129, 84, 40, 2, 0, 2],
+	[new Date(2012, 4, 27), 130, 38, 19, 37, 0, 14, 8, 4, 0],
+	[new Date(2012, 4, 28), 48, 1, 11, 9, 1, 5, 10, 2, 1],
+	[new Date(2012, 4, 29), 82, 3, 10, 24, 6, 11, 6, 7, 0],
+	[new Date(2012, 4, 30), 41, 0, 5, 10, 11, 0, 14, 0, 0],
+	[new Date(2012, 4, 31), 8, 0, 2, 0, 2, 3, 1, 0, 0],
+	[new Date(2012, 5, 1), 103, 0, 28, 8, 5, 20, 20, 4, 0],
+	[new Date(2012, 5, 2), 65, 1, 19, 2, 2, 16, 2, 1, 0],
+	[new Date(2012, 5, 3), 99, 0, 28, 2, 1, 25, 0, 0, 16],
+	[new Date(2012, 5, 4), 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[new Date(2012, 5, 5), 15, 0, 6, 0, 0, 6, 0, 0, 0],
+	[new Date(2012, 5, 6), 92, 0, 26, 0, 9, 18, 7, 2, 0],
+	[new Date(2012, 5, 7), 5, 0, 0, 0, 2, 0, 0, 0, 1],
+	[new Date(2012, 5, 8), 71, 0, 15, 1, 9, 0, 12, 15, 0],
+	[new Date(2012, 5, 9), 17, 0, 4, 0, 0, 0, 0, 7, 1],
+	[new Date(2012, 5, 10), 44, 0, 4, 0, 12, 6, 9, 8, 0],
+	[new Date(2012, 5, 11), 33, 0, 10, 0, 18, 0, 0, 2, 0],
+	[new Date(2012, 5, 12), 81, 0, 12, 36, 2, 2, 0, 3, 0],
+	[new Date(2012, 5, 13), 92, 2, 31, 7, 16, 0, 0, 25, 8],
+	[new Date(2012, 5, 14), 100, 1, 20, 17, 26, 3, 0, 27, 0],
+	[new Date(2012, 5, 15), 158, 0, 12, 48, 32, 13, 5, 2, 0],
+	[new Date(2012, 5, 16), 587, 6, 94, 143, 94, 49, 25, 80, 0],
+	[new Date(2012, 5, 17), 176, 7, 27, 33, 44, 12, 4, 15, 0],
+	[new Date(2012, 5, 18), 61, 3, 1, 0, 21, 3, 2, 8, 3],
+	[new Date(2012, 5, 19), 74, 9, 12, 0, 7, 17, 2, 8, 0],
+	[new Date(2012, 5, 20), 43, 2, 5, 0, 1, 16, 0, 4, 0],
+	[new Date(2012, 5, 21), 101, 39, 29, 2, 2, 2, 2, 2, 15],
+	[new Date(2012, 5, 22), 1128, 49, 116, 345, 105, 47, 1, 122, 172],
+	[new Date(2012, 5, 23), 824, 96, 165, 131, 52, 33, 26, 29, 34],
+	[new Date(2012, 5, 24), 201, 45, 11, 30, 34, 5, 6, 0, 27],
+	[new Date(2012, 5, 25), 781, 138, 19, 145, 122, 0, 0, 100, 36],
+	[new Date(2012, 5, 26), 692, 131, 84, 127, 55, 16, 0, 22, 15],
+	[new Date(2012, 5, 27), 1050, 221, 145, 74, 50, 45, 30, 64, 56],
+	[new Date(2012, 5, 28), 24, 6, 6, 0, 3, 0, 0, 0, 1]
+        ]);
+        
+        var options = {
+          title: 'Colaboración diaria'
+        };
+
+        var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+            document.getElementById('daily_div'));
+        annotatedtimeline.draw(data, {'displayAnnotations': true});
+        //var chart = new google.visualization.LineChart(document.getElementById('daily_div'));
+        //chart.draw(data, options);
+      }
+      
+    </script>
+    <title>Estadísticas de "Me lo como todo"</title>
+  </head>
+  <body>
+    <h1>Estadísticas de "Me lo como todo"</h1>
+    Último evento registrado el Thursday, 28 de June de 2012 a las 01:19
+    <h2>Trending topics de la última semana (alpha)<h2>
+    <div id="tt_div" style="width: 500px;"></div>
+    <h2>Positivos</h2>
+    <a href="positives.png"><img src="positives.png"/></a>
+    <div style="width: 900px; font-size: small;">
+        Cada nodo contiene el nombre del participante y entre paréntesis los positivos recibidos.
+        Una flecha A---n-->B indica que A dio n positivos a B. El grosor y el color de la flecha
+        dependen del número de positivos.</div>
+    <h2>Colaboración</h2>
+    <div id="messages_chart_div" style="width: 900px; height: 500px;"></div>
+    <div id="characters_chart_div" style="width: 900px; height: 500px;"></div>
+    <h3>Colaboración diaria</h3>
+    <div id="daily_div" style="width: 900px; height: 400px;"></div>
+    <h2>Palabras más repetidas (quitando las 1000 más comunes del español)</h2>
+    <div id="table_div" style="width: 500px; height: 500px;"></div>
+  </body>
+</html>
