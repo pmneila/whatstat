@@ -19,20 +19,59 @@ def load_chat(filename, authors_file=None):
     
     return chat
 
+def trending_topics(chat, number=10):
+    
+    words = list(set(chat.get_words(True)))
+    by_words = {w:[] for w in words}
+    words_per_week = []
+    
+    for week, weekchat in chat.iterweeks():
+        
+        week_words = weekchat.get_words(True)
+        week_words_count = Counter(week_words)
+        words_per_week.append(len(week_words))
+        
+        for w, v in by_words.iteritems():
+            v.append(0)
+        
+        for word, count in week_words_count.iteritems():
+            by_words[word][-1] = count
+    
+    res = {}
+    
+    active_words = sum(words_per_week)
+    for word in by_words:
+        word_history = by_words[word]
+        
+        word_normal_freq = sum(word_history)/float(active_words)
+        word_last_freq = word_history[-1]/float(words_per_week[-1])
+        res[word] = (word_last_freq - word_normal_freq)/word_normal_freq * math.log(word_history[-1] + 1)
+    
+    res = sorted(res.iteritems(), key=itemgetter(1))[-number:]
+    tt = map(itemgetter(0), res)
+    #return res, by_words, words_per_week
+    return tt
+
 def tf_idf(chat):
     
     unique_words = list(set(chat.get_words(True)))
     df = dict([(w,0) for w in unique_words])
     tf = {}
     
+    words = list(set(chat.get_words(True)))
+    by_word = {w:[] for w in words}
+    
     D = 0
-    for day, daychat in chat.iterdays():
+    for day, daychat in chat.iterweeks():
         
         daywords = daychat.get_words(True)
         daywordscount = Counter(daywords)
         
         if len(daywords) > 0:
             D += 1
+        
+        for w in by_word:
+            by_word[w].append(0)
         
         for word, count in daywordscount.iteritems():
             tf[(day,word)] = count #/float(len(daywords))
@@ -41,6 +80,7 @@ def tf_idf(chat):
     tf_idf = {}
     by_day = {}
     by_word = {}
+    
     for (day,word), count in tf.iteritems():
         aux = count * math.log(float(D)/df[word])
         tf_idf[(day,word)] = aux
@@ -52,6 +92,17 @@ def tf_idf(chat):
         by_word[word][day] = aux
     
     return by_day, by_word, df
+
+def messages_per_day_per_author(chat):
+    
+    by_day = {}
+    
+    for day, daychat in chat.iterdays():
+        by_day[day] = {}
+        for author in daychat.authors:
+            by_day[day][author] = len(daychat.filter_author(author).messages)
+    
+    return by_day
 
 def count_words(chat):
     

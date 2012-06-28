@@ -55,6 +55,20 @@ class Chat(object):
             yield day, self.filter_day(day)
             day += datetime.timedelta(1)
     
+    def iterweeks(self):
+        
+        dates = self.get_datetime_range()
+        one_week = datetime.timedelta(7)
+        
+        aux =[]
+        day = dates[1] - one_week
+        while day + one_week > dates[0]:
+            aux.append(day)
+            day -= one_week
+        
+        for day in aux[::-1]:
+            yield day, self.filter_datetime_range(day, day+one_week)
+    
     def get_datetime_range(self):
         return self.events[0].datetime, self.events[-1].datetime
     
@@ -89,8 +103,8 @@ class Author(object):
         return unicode(self).encode("utf-8")
     
     def __unicode__(self):
-        if self.alias is not None:
-            return self.alias
+        if len(self.alias)>0:
+            return self.alias[0]
         return self.name
     
     def __repr__(self):
